@@ -1,0 +1,14 @@
+G:\پروژه گیت\SolutionSolon\SolutionSolon\SolutionSolon\DataLayer\bin\Debug\net8.0\DataLayer.deps.json
+G:\پروژه گیت\SolutionSolon\SolutionSolon\SolutionSolon\DataLayer\bin\Debug\net8.0\DataLayer.runtimeconfig.json
+G:\پروژه گیت\SolutionSolon\SolutionSolon\SolutionSolon\DataLayer\bin\Debug\net8.0\DataLayer.dll
+G:\پروژه گیت\SolutionSolon\SolutionSolon\SolutionSolon\DataLayer\bin\Debug\net8.0\DataLayer.pdb
+G:\پروژه گیت\SolutionSolon\SolutionSolon\SolutionSolon\DataLayer\obj\Debug\net8.0\DataLayer.csproj.AssemblyReference.cache
+G:\پروژه گیت\SolutionSolon\SolutionSolon\SolutionSolon\DataLayer\obj\Debug\net8.0\DataLayer.GeneratedMSBuildEditorConfig.editorconfig
+G:\پروژه گیت\SolutionSolon\SolutionSolon\SolutionSolon\DataLayer\obj\Debug\net8.0\DataLayer.AssemblyInfoInputs.cache
+G:\پروژه گیت\SolutionSolon\SolutionSolon\SolutionSolon\DataLayer\obj\Debug\net8.0\DataLayer.AssemblyInfo.cs
+G:\پروژه گیت\SolutionSolon\SolutionSolon\SolutionSolon\DataLayer\obj\Debug\net8.0\DataLayer.csproj.CoreCompileInputs.cache
+G:\پروژه گیت\SolutionSolon\SolutionSolon\SolutionSolon\DataLayer\obj\Debug\net8.0\DataLayer.dll
+G:\پروژه گیت\SolutionSolon\SolutionSolon\SolutionSolon\DataLayer\obj\Debug\net8.0\refint\DataLayer.dll
+G:\پروژه گیت\SolutionSolon\SolutionSolon\SolutionSolon\DataLayer\obj\Debug\net8.0\DataLayer.pdb
+G:\پروژه گیت\SolutionSolon\SolutionSolon\SolutionSolon\DataLayer\obj\Debug\net8.0\DataLayer.genruntimeconfig.cache
+G:\پروژه گیت\SolutionSolon\SolutionSolon\SolutionSolon\DataLayer\obj\Debug\net8.0\ref\DataLayer.dll
