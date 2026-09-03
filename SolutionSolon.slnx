@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="BlazorAppSolon/BlazorAppSolon.csproj" />
+  <Project Path="CoreSolon/CoreSolon.csproj" />
+  <Project Path="DataLayerSolon/DataLayerSolon.csproj" />
+  <Project Path="WebApiSolon/WebApiSolon.csproj" />
+</Solution>

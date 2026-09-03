@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- تولید سند OpenAPI (خودِ ASP.NET Core، جایگزین Swashbuckle از .NET 9 به بعد) -->
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
+    <!-- فقط رابط کاربری Swagger در آدرس /swagger -->
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.0.1" />
+    <!-- رابط کاربری مدرن Scalar در آدرس /scalar (اختیاری) -->
+    <PackageReference Include="Scalar.AspNetCore" Version="2.16.18" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CoreSolon\CoreSolon.csproj" />
+    <ProjectReference Include="..\DataLayerSolon\DataLayerSolon.csproj" />
+  </ItemGroup>
+
+</Project>
