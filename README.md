@@ -1,35 +1,38 @@
 # SolonProject
 
-راه‌اندازی و اجرای پروژه، به‌همراه توضیح دو مشکلی که قبلاً باعث می‌شد پروژه در Visual Studio اجرا نشود.
+پروژه‌ی سالن زیبایی — **ASP.NET Core Web API (.NET 8)** + **Blazor WebAssembly (.NET 8)** + **EF Core 8 (SQL Server)**.
 
 ---
 
-## ۱) ساختار ریپازیتوری
+## ۱) ساختار سلوشن
+
+فایل سلوشن: **`SolutionSolon.sln`** (فرمت کلاسیک — با همه‌ی نسخه‌های Visual Studio باز می‌شود).
 
 | پروژه | نوع | توضیح |
 |---|---|---|
-| `WebApiSolon` | ASP.NET Core Web API (`net10.0`) | وب‌سرویس + Swagger |
-| `BlazorAppSolon` | Blazor WebAssembly (`net10.0`) | رابط کاربری |
-| `CoreSolon` | Class Library | لایه‌ی هسته |
-| `DataLayerSolon` | Class Library | لایه‌ی داده |
+| `WebApiSolon` | ASP.NET Core Web API (`net8.0`) | وب‌سرویس + Swagger + ثبت `DatabaseContext` در DI |
+| `BlazorAppSolon` | Blazor WebAssembly (`net8.0`) | رابط کاربری |
+| `DataLayer` | Class Library (`net8.0`) | `DatabaseContext`، ۱۶ موجودیت `Tbl_*` و Migration |
+| `DataCore` | Class Library (`net8.0`) | (فعلاً فقط `Class1.cs`) |
 
-فایل سلوشن: **`SolutionSolon.slnx`** (فرمت جدید XML).
+پکیج‌های اصلی:
+
+- `Swashbuckle.AspNetCore` **6.6.2** → Swagger UI در `/swagger`
+- `Microsoft.EntityFrameworkCore` / `.SqlServer` / `.Design` / `.Tools` **8.0.0**
+- `Microsoft.AspNetCore.Components.WebAssembly` **8.0.14**
 
 ---
 
-## ۲) پیش‌نیازها (خیلی مهم)
+## ۲) پیش‌نیازها
 
-بدون این دو مورد، پروژه در Visual Studio **باز یا اجرا نمی‌شود**:
-
-1. **.NET 10 SDK**
-   همه‌ی پروژه‌ها `<TargetFramework>net10.0</TargetFramework>` هستند.
-   دانلود: https://dotnet.microsoft.com/download/dotnet/10.0
-   بررسی: `dotnet --version` باید چیزی مثل `10.0.xxx` بدهد.
-   > اگر SDK قدیمی‌تر نصب باشد خطای `NETSDK1045: The current .NET SDK does not support targeting .NET 10.0` را می‌گیرید.
-
-2. **Visual Studio 2022 نسخه‌ی 17.13 به بالا (یا Visual Studio 2026)**
-   چون فایل سلوشن با فرمت جدید **`.slnx`** ذخیره شده است. نسخه‌های قدیمی‌تر (۱۷.۱۰ و قبل‌تر) این فرمت را نمی‌شناسند و سلوشن را باز نمی‌کنند.
-   > راه‌حل جایگزین: VS را به‌روزرسانی کنید، یا اگر مجبورید، در VS جدید از `File > Save Solution As…` یک فایل `.sln` کلاسیک بسازید.
+1. **.NET 8 SDK** → https://dotnet.microsoft.com/download/dotnet/8.0
+   بررسی: `dotnet --version` باید `8.0.xxx` بدهد.
+2. **Visual Studio 2022 (17.8 به بالا)** — چون سلوشن `.sln` کلاسیک است، نسخه‌های قدیمی هم کار می‌کنند.
+3. **SQL Server** — رشته‌ی اتصال پیش‌فرض به `.\sqlexpress` اشاره دارد:
+   ```json
+   "DefaultConnection": "Server=.\\sqlexpress;Database=SalonDB;Trusted_Connection=True;TrustServerCertificate=True;"
+   ```
+   اگر SQL Server شما instance پیش‌فرض است، `Server=.` یا `Server=localhost` بگذارید.
 
 ---
 
@@ -40,72 +43,77 @@ git clone https://github.com/fatemelakzaei75-blip/SolonProject.git
 cd SolonProject
 dotnet restore
 dotnet build
-```
-
-اجرای API با Swagger:
-
-```bash
 dotnet run --project WebApiSolon
 ```
 
-یا در Visual Studio: روی `WebApiSolon` کلیک راست → **Set as Startup Project** → کلید **F5**.
-
-آدرس‌ها:
+در Visual Studio: `WebApiSolon` را **Set as Startup Project** کنید و **F5** بزنید
+(یا از پروفایل چندپروژه‌ای `New Profile` که هم Blazor و هم API را با هم بالا می‌آورد).
 
 | آدرس | توضیح |
 |---|---|
-| `https://localhost:7217/swagger` | رابط کاربری Swagger |
-| `https://localhost:7217/scalar` | رابط کاربری Scalar |
-| `https://localhost:7217/openapi/v1.json` | سند خام OpenAPI |
-| `https://localhost:7217/weatherforecast` | تست کنترلر |
+| `https://localhost:7182/swagger` | Swagger UI |
+| `https://localhost:7182/weatherforecast` | تنها کنترلر موجود (قالب پیش‌فرض) |
+| `https://localhost:5187` | همان API روی HTTP |
 
-برای Blazor هم `BlazorAppSolon` را به‌عنوان Startup Project انتخاب کنید (`https://localhost:7093`).
-
-> نکته: Swagger و OpenAPI فقط در محیط **Development** فعال هستند (`if (app.Environment.IsDevelopment())`). اگر با محیط Production اجرا بگیرید، صفحه‌ی Swagger بالا نمی‌آید.
+> Swagger فقط در محیط **Development** فعال است (`if (app.Environment.IsDevelopment())`).
 
 ---
 
-## ۴) دو مشکلی که قبلاً وجود داشت
+## ۴) دیتابیس و Migration
 
-### مشکل اول: هیچ کدی در Git نبود، فقط یک فایل zip
-ریپازیتوری فقط شامل یک فایل `ProjectS.zip` بود (کامیت `9a8a177 - Add files via upload`). یعنی وقتی با **Clone Repository** پروژه را می‌گرفتید، فقط یک فایل فشرده دانلود می‌شد و هیچ `.slnx` / `.csproj` / فایل کدی وجود نداشت؛ به همین دلیل Visual Studio چیزی برای اجرا پیدا نمی‌کرد.
-الان کل پروژه به‌صورت فایل‌های واقعی در ریشه‌ی ریپو قرار گرفته و `ProjectS.zip` حذف شده است. فولدرهای `bin`، `obj` و `.vs` هم که نباید در Git باشند با `.gitignore` حذف/نادیده گرفته شدند.
-
-### مشکل دوم: Swagger اصلاً نصب نبود
-قالب Web API در **.NET 9 و بعد از آن** دیگر Swashbuckle را به‌صورت پیش‌فرض ندارد؛ به‌جایش پکیج `Microsoft.AspNetCore.OpenApi` آمده که **فقط سند JSON را تولید می‌کند و هیچ رابط کاربری ندارد**. پس `/swagger` وجود نداشت و خطای ۴۰۴ می‌داد — این باگ پروژه نبود، طراحی جدید مایکروسافت است.
-
-کاری که انجام شد (`WebApiSolon/Program.cs` و `WebApiSolon.csproj`):
+`DataLayer/Migrations/20260901203010_CreatTbls.cs` موجود است و در `WebApiSolon/Program.cs`
+هنگام start-up برنامه به‌صورت خودکار اجرا می‌شود:
 
 ```csharp
-builder.Services.AddOpenApi();      // تولید سند OpenAPI
-
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    app.MapOpenApi();               // -> /openapi/v1.json
-
-    app.UseSwaggerUI(options =>     // -> /swagger
-    {
-        options.SwaggerEndpoint("/openapi/v1.json", "WebApiSolon v1");
-    });
-
-    app.MapScalarApiReference();    // -> /scalar (اختیاری)
+    scope.ServiceProvider.GetRequiredService<DatabaseContext>().Database.Migrate();
 }
 ```
 
-پکیج‌های اضافه‌شده:
-- `Swashbuckle.AspNetCore.SwaggerUI` → فقط رابط کاربری Swagger (نه تولید سند)
-- `Scalar.AspNetCore` → رابط کاربری مدرن‌تر در `/scalar` (اختیاری؛ اگر نمی‌خواهید، پکیج و خط `MapScalarApiReference()` را حذف کنید)
+یعنی **دیتابیس `SalonDB` و جدول‌ها در اولین اجرا خودشان ساخته می‌شوند** (به شرط اینکه SQL Server در دسترس باشد).
+اگر SQL Server بالا نباشد، خطا فقط در لاگ نوشته می‌شود و API همچنان بالا می‌آید تا بتوانید Swagger را ببینید.
 
-همچنین در `WebApiSolon/Properties/launchSettings.json` مقدار `launchBrowser` روی `true` و `launchUrl` روی `swagger` تنظیم شد تا با F5 مرورگر مستقیماً روی صفحه‌ی Swagger باز شود (قبلاً `launchBrowser: false` بود و هیچ صفحه‌ای باز نمی‌شد).
+اجرای دستی Migration (اختیاری):
+
+```bash
+dotnet tool install --global dotnet-ef
+dotnet ef database update --project DataLayer --startup-project WebApiSolon
+```
+
+ساخت Migration جدید:
+
+```bash
+dotnet ef migrations add MyNewMigration --project DataLayer --startup-project WebApiSolon
+```
 
 ---
 
-## ۵) اگر هنوز اجرا نشد
+## ۵) وضعیت فعلی / کارهای باقی‌مانده
+
+- تنها کنترلر موجود `WeatherForecastController` است؛ **هیچ کنترلری برای موجودیت‌های `Tbl_*` نوشته نشده**، پس در Swagger فقط `GET /weatherforecast` دیده می‌شود.
+- پروژه‌های `DataCore` و `DataLayer` فقط در API ارجاع شده‌اند؛ `BlazorAppSolon` هنوز به API وصل نیست (صفحه‌ی `Weather.razor` از `wwwroot/sample-data/weather.json` می‌خواند، نه از وب‌سرویس). برای وصل شدن، `BaseAddress` در `BlazorAppSolon/Program.cs` باید روی آدرس API تنظیم شود و API هم `AddCors` بگیرد.
+- نسخه‌ی پکیج‌های EF Core `8.0.0` است؛ آخرین نسخه‌ی پچ سری ۸ یعنی `8.0.30` روی nuget.org موجود است و ارتقا به آن توصیه می‌شود (فقط شماره‌ی نسخه در `WebApiSolon.csproj` و `DataLayer.csproj` عوض شود).
+
+---
+
+## ۶) تغییرات اخیر در ریپازیتوری
+
+- فولدرهای `bin`، `obj`، `.vs` و فایل‌های `*.user` که اشتباهی commit شده بودند (۱۴۴۶ فایل از ۱۵۰۵ فایل، حدود ۱۵۰ مگابایت) از Git حذف شدند و `.gitignore` اضافه شد.
+  این فایل‌ها خروجی build هستند و نباید در Git باشند؛ هر بار با build دوباره ساخته می‌شوند.
+- `ProjectS.zip` و `SolutionSolon.zip` (که قبلاً کل پروژه بودند) حذف شدند؛ الان کد واقعی در ریپو است.
+- `Database.Migrate()` هنگام startup اضافه شد.
+
+---
+
+## ۷) اگر اجرا نشد
 
 | خطا / علامت | علت | راه‌حل |
 |---|---|---|
-| `NETSDK1045` | .NET 10 SDK نصب نیست | نصب SDK 10 از سایت مایکروسافت |
-| سلوشن باز نمی‌شود | VS قدیمی‌تر از 17.13 | به‌روزرسانی Visual Studio |
-| `/swagger` خطای ۴۰۴ | محیط Production یا `MapOpenApi` صدا زده نشده | با profile `https`/`http` در حالت Development اجرا کنید |
-| `NU1101` هنگام restore | منبع NuGet در دسترس نیست / پکیج‌ها کش نشده‌اند | اتصال به nuget.org و اجرای `dotnet restore` |
+| `NETSDK1045` | .NET 8 SDK نصب نیست | نصب SDK 8 |
+| `A network-related or instance-specific error ... (26)` یا `Cannot open database "SalonDB"` | SQL Server Express در دسترس نیست / instance اشتباه | سرویس `SQL Server (SQLEXPRESS)` را Start کنید یا `Server=` را اصلاح کنید |
+| `Login failed for user ...` | `Trusted_Connection=True` ولی Windows Authentication غیرفعال است | Windows Authentication را در SQL Server فعال کنید یا از user/password استفاده کنید |
+| `/swagger` خطای ۴۰۴ | محیط Production | با پروفایل `https` یا `http` (Development) اجرا کنید |
+| `NU1101` هنگام restore | عدم دسترسی به nuget.org | اتصال اینترنت / پاک‌کردن کش: `dotnet nuget locals all --clear` |
 | خطای گواهی HTTPS | dev-certificate نصب نیست | `dotnet dev-certs https --trust` |
+| پروفایل `IIS Express` کار نمی‌کند | فایل `.vs/.../applicationhost.config` از Git حذف شده | یک بار سلوشن را در VS باز کنید تا VS خودش آن را بازسازی کند، یا از پروفایل `https` استفاده کنید |

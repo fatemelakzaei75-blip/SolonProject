@@ -1,31 +1,38 @@
-using Scalar.AspNetCore;
+using DataLayer.Context;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
-
-// تولید سند OpenAPI توسط خودِ ASP.NET Core (از .NET 9 به بعد Swashbuckle دیگر در قالب پروژه نیست)
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// ساخت/به‌روزرسانی خودکار دیتابیس با Migration های موجود در DataLayer
+// (اگر SQL Server در دسترس نباشد، خطا فقط لاگ می‌شود و برنامه بالا می‌آید)
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        scope.ServiceProvider.GetRequiredService<DatabaseContext>().Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "Database migration failed. Connection string: {ConnectionString}",
+            app.Configuration.GetConnectionString("DefaultConnection"));
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    // سند OpenAPI را در آدرس /openapi/v1.json در دسترس می‌گذارد
-    app.MapOpenApi();
-
-    // رابط کاربری Swagger در آدرس /swagger
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/openapi/v1.json", "WebApiSolon v1");
-    });
-
-    // رابط کاربری Scalar در آدرس /scalar (اختیاری - اگر لازم ندارید حذفش کنید)
-    app.MapScalarApiReference();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
