@@ -9,17 +9,17 @@ namespace DataCore.Interfaces
 {
     public interface ISalonServiceService
     {
-        List<Tbl_SalonService> GetServices();
+        List<Tbl_SalonSerice> GetServices();
 
-        Tbl_SalonService GetServiceByTC(string tc);
+        Tbl_SalonSerice GetServiceByTC(string tc);
 
-        List<Tbl_SalonService> GetServicesByCategoryTC(string categoryTC);
+        List<Tbl_SalonSerice> GetServicesByCategoryTC(string categoryTC);
 
-        List<Tbl_SalonService> SearchServices(string search);
+        List<Tbl_SalonSerice> SearchServices(string search);
 
-        bool AddService(Tbl_SalonService service);
+        bool AddService(Tbl_SalonSerice service);
 
-        bool EditService(Tbl_SalonService service);
+        bool EditService(Tbl_SalonSerice service);
 
         bool DeleteService(string tc);
     }
